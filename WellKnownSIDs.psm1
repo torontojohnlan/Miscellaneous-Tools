@@ -76,17 +76,73 @@ class wellKnownPrincipals{
         "552"
         "553"
     )
+    static [string[]] $builtinADGroups=@(
+        "Access Control Assistance Operators",
+        "Account Operators",
+        "Administrators",
+        "Allowed RODC Password Replication",
+        "Backup Operators",
+        "Certificate Service DCOM Access",
+        "Cert Publishers",
+        "Cloneable Domain Controllers",
+        "Cryptographic Operators",
+        "Denied RODC Password Replication",
+        "Device Owners",
+        "DHCP Administrators",
+        "DHCP Users",
+        "Distributed COM Users",
+        "DnsUpdateProxy",
+        "DnsAdmins",
+        "Domain Admins",
+        "Domain Computers",
+        "Domain Controllers",
+        "Domain Guests",
+        "Domain Users",
+        "Enterprise Admins",
+        "Enterprise Key Admins",
+        "Enterprise Read-only Domain Controllers",
+        "Event Log Readers",
+        "Group Policy Creator Owners",
+        "Guests",
+        "Hyper-V Administrators",
+        "IIS_IUSRS",
+        "Incoming Forest Trust Builders",
+        "Key Admins",
+        "Network Configuration Operators",
+        "Performance Log Users",
+        "Performance Monitor Users",
+        "Pre–Windows 2000 Compatible Access",
+        "Print Operators",
+        "Protected Users",
+        "RAS and IAS Servers",
+        "RDS Endpoint Servers",
+        "RDS Management Servers",
+        "RDS Remote Access Servers",
+        "Read-only Domain Controllers",
+        "Remote Desktop Users",
+        "Remote Management Users",
+        "Replicator",
+        "Schema Admins",
+        "Server Operators",
+        "Storage Replica Administrators",
+        "System Managed Accounts",
+        "Terminal Server License Servers",
+        "Users",
+        "Windows Authorization Access",
+        "WinRMRemoteWMIUsers_"
+    )
 
-    static [boolean] isWellKnown([string]$sid){
-        if($sid -in [wellKnownPrincipals]::wellKnownSIDs){return $true} # found in known SID list
-        if($sid -notmatch "S-\d{1}-(\d{1,14}-)+(?<RID>\d{1,14})$") {throw "$sid is not a valid SID"} # not a valid SID. Ideally exception should be thrown here
-        else{if($Matches.RID -in [wellKnownPrincipals]::wellKnownRIDs) {return $true}}
-        return $false
+    static [boolean] isWellKnown([string]$s,[string]$type){
+        if($type -eq "SID"){
+            if($s -in [wellKnownPrincipals]::wellKnownSIDs){return $true} # found in known SID list
+            if($s -notmatch "S-\d{1}-(\d{1,14}-)+(?<RID>\d{1,14})$") {throw "$s is not a valid SID"} # not a valid SID. Ideally exception should be thrown here
+            else{if($Matches.RID -in [wellKnownPrincipals]::wellKnownRIDs) {return $true}}
+            return $false
+        }
+        elseif($type -eq "name"){
+            if($s -in [wellknownPrincipals]::builtinADGroups){ return $true}
+            else {return $false}
+        }
+        else { throw "invalid comparison type"}
     }
 }
-
-# $sid="S-1-5-21-329068152-1214440a339-682003330-553"
-# #$sid="S-1-5-32-5783"
-# try {[wellKnownPrincipals]::isWellKnown($sid)}
-# catch {$_}
-# write-host "continue"
